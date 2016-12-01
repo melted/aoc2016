@@ -1,5 +1,6 @@
 use std::io::prelude::*;
 use std::fs::File;
+use std::collections::HashSet;
 
 
 fn str_to_turn(s:&str) -> i32 {
@@ -25,7 +26,6 @@ fn update((x, y) : (i32, i32), dir : i32, steps : i32) -> (i32, i32) {
     }
 }
 
-
 fn main() {
     let mut inp = File::open("input.txt").expect("Failed to open input");
     let mut data = String::new();
@@ -46,7 +46,7 @@ fn main() {
     println!("Part One: {:?}", fx.abs() + fy.abs());
     
     // Part Two
-    let mut positions : Vec<(i32, i32)> = Vec::new();
+    let mut positions : HashSet<(i32, i32)> = HashSet::new();
     let mut current = initial_pos;
 
     'nested: for (t, s) in v {
@@ -59,7 +59,7 @@ fn main() {
             if positions.contains(&new_pos) {
                 break 'nested;    
             }
-            positions.push(new_pos);
+            positions.insert(new_pos);
         }
     } 
 
