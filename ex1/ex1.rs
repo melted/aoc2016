@@ -25,6 +25,7 @@ fn update((x, y) : (i32, i32), dir : i32, steps : i32) -> (i32, i32) {
     }
 }
 
+
 fn main() {
     let mut inp = File::open("input.txt").expect("Failed to open input");
     let mut data = String::new();
@@ -42,5 +43,25 @@ fn main() {
                                 (new_dir, update(pos, new_dir, s))
                             });
 
-    print!("{:?}", fx.abs() + fy.abs());
+    println!("Part One: {:?}", fx.abs() + fy.abs());
+    
+    // Part Two
+    let mut positions : Vec<(i32, i32)> = Vec::new();
+    let mut current = initial_pos;
+
+    'nested: for (t, s) in v {
+        let (dir, pos) = current;
+        let new_dir = turn(dir, t);
+        let mut new_pos = pos;
+        for _ in 0..s {
+            new_pos = update(new_pos, new_dir, 1);
+            current = (new_dir, new_pos);
+            if positions.contains(&new_pos) {
+                break 'nested;    
+            }
+            positions.push(new_pos);
+        }
+    } 
+
+    println!("Part Two: {:?}", (current.1).0.abs() + (current.1).1.abs());
 }
