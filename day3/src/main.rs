@@ -9,9 +9,9 @@ fn load_input() -> String {
 }
 
 fn valid_count(v : &Vec<Vec<i32>>) -> usize {
-    v.iter().filter(|v| {
-        let total : i32 = v.iter().sum();
-        v.iter().map(|n| n + n - total).all(|x| x < 0)
+    v.iter().filter(|u| {
+        let total : i32 = u.iter().sum();
+        u.iter().map(|n| n + n - total).all(|x| x < 0)
     }).count()
 }
 
@@ -38,10 +38,21 @@ fn part2_triangles(s : &str) -> Vec<Vec<i32>> {
     out
 }
 
+fn p2_triangles(t : &Vec<Vec<i32>>) -> Vec<Vec<i32>> {
+    let mut out = Vec::new();
+    let n = t.len();
+    for i in 0..n {
+        let f = |z| *t.get((i*3)%n+z).unwrap().get((i*3+z)/n).unwrap();
+        out.push([f(0),f(1),f(2)].to_vec());
+    }
+    out
+}
+
 fn main() {
     let data = load_input();
     let triangles = data.lines().map(|s| get_row(s)).collect();
     let triangles2 = part2_triangles(&data);
+    let t2 = p2_triangles(&triangles);
 
-    println!("{} {}", valid_count(&triangles), valid_count(&triangles2));
+    println!("{} {} {}", valid_count(&triangles), valid_count(&triangles2), valid_count(&t2));
 }
