@@ -20,12 +20,12 @@ fn get_row(s : &str) -> Vec<i32> {
 }
 
 fn part2_triangles(s : &str) -> Vec<Vec<i32>> {
-    let mut values : Vec<i32> = Vec::new();
+    let mut values = Vec::new();
     let n = s.lines().count();
     values.resize(n * 3, 0);
 
     for (i, l) in s.lines().enumerate() {
-        let v : Vec<i32> = get_row(l);
+        let v = get_row(l);
         for p in 0..3 {
             *values.get_mut(i + p*n).unwrap() = *v.get(p).unwrap();
         }
@@ -40,7 +40,7 @@ fn part2_triangles(s : &str) -> Vec<Vec<i32>> {
 
 fn main() {
     let data = load_input();
-    let triangles : Vec<Vec<i32>> = data.lines().map(|s| get_row(s)).collect();
+    let triangles = data.lines().map(|s| get_row(s)).collect();
     let triangles2 = part2_triangles(&data);
 
     println!("{} {}", valid_count(&triangles), valid_count(&triangles2));
