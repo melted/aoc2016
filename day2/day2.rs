@@ -38,7 +38,7 @@ fn transition(p2: bool, n: i32, c: char) -> i32 {
         'R' => trans[1],
         'D' => trans[2],
         'L' => trans[3],
-        _ => panic!("Bad direction"),
+        _ => panic!("Bad direction")
     }
 }
 
