@@ -9,10 +9,14 @@ fn load_input() -> String {
 }
 
 fn valid_count(v : &Vec<Vec<i32>>) -> usize {
-    v.iter().map(|v| {
+    v.iter().filter(|v| {
         let total : i32 = v.iter().sum();
         v.iter().map(|n| n + n - total).all(|x| x < 0)
-    }).filter(|&b| b).count()
+    }).count()
+}
+
+fn get_row(s : &str) -> Vec<i32> {
+    s.split_whitespace().map(|n| i32::from_str_radix(n, 10).expect("Conversion")).collect()
 }
 
 fn part2_triangles(s : &str) -> Vec<Vec<i32>> {
@@ -21,9 +25,7 @@ fn part2_triangles(s : &str) -> Vec<Vec<i32>> {
     values.resize(n * 3, 0);
 
     for (i, l) in s.lines().enumerate() {
-        let v : Vec<i32> = l.split_whitespace()
-                            .map(|n| i32::from_str_radix(n, 10).expect("Conversion"))
-                            .collect();
+        let v : Vec<i32> = get_row(l);
         for p in 0..3 {
             *values.get_mut(i + p*n).unwrap() = *v.get(p).unwrap();
         }
@@ -38,13 +40,8 @@ fn part2_triangles(s : &str) -> Vec<Vec<i32>> {
 
 fn main() {
     let data = load_input();
-    let triangles : Vec<Vec<i32>> = data.lines()
-                                        .map(|s| s.split_whitespace()
-                                                  .map(|n| i32::from_str_radix(n, 10).expect("Conversion"))
-                                                  .collect())
-                                        .collect();
+    let triangles : Vec<Vec<i32>> = data.lines().map(|s| get_row(s)).collect();
     let triangles2 = part2_triangles(&data);
 
-    println!("{:?}/{}", valid_count(&triangles), triangles.len());
-    println!("{:?}/{}", valid_count(&triangles2), triangles2.len());
+    println!("{} {}", valid_count(&triangles), valid_count(&triangles2));
 }
