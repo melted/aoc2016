@@ -13,7 +13,7 @@ fn load_input() -> String {
 }
 
 #[derive(Debug)]
-struct Room (String, i32, String);
+struct Room (String, u32, String);
 
 fn parse_input(s: &str) -> Vec<Room> {
     let mut out = Vec::new();
@@ -46,10 +46,30 @@ fn is_legit_room(room : &Room) -> bool {
     true
 }
 
+fn decrypt_room(room : &Room) -> String {
+    let bytes = room.0.as_bytes();
+    let mut out = String::new();
+    for b in bytes {
+        if *b == 45u8 {
+            out.push(' ');
+        } else {
+            let n : u32 = (*b - 97) as u32;
+            let d = (n + room.1) % 26 + 97;
+            out.push((d as u8) as char);
+        }   
+    }
+    out
+}
+
 fn main() {
     let data = load_input();
     let rooms = parse_input(&data);
-
-    let summation : i32 = rooms.iter().filter(|r| is_legit_room(&r)).map(|r| r.1).sum();
+    let summation : u32 = rooms.iter().filter(|r| is_legit_room(&r)).map(|r| r.1).sum();
     println!("{:?}", summation);
+    for r in rooms {
+        let decrypt = decrypt_room(&r);
+        if decrypt.contains("north") {
+            println!("{} {}", decrypt, r.1);
+        }
+    }
 }
