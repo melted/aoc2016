@@ -47,14 +47,13 @@ fn is_legit_room(room : &Room) -> bool {
 }
 
 fn decrypt_room(room : &Room) -> String {
-    let bytes = room.0.as_bytes();
     let mut out = String::new();
-    for b in bytes {
-        if *b == 45u8 {
+    for c in room.0.chars() {
+        let v = c as u32;
+        if v == 45 {
             out.push(' ');
         } else {
-            let n : u32 = (*b - 97) as u32;
-            let d = (n + room.1) % 26 + 97;
+            let d = ((v - 97) + room.1) % 26 + 97;
             out.push((d as u8) as char);
         }   
     }
