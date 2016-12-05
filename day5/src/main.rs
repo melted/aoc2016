@@ -18,7 +18,7 @@ fn main() {
             let pos = (digest[2] & 0x0f) as usize;
             if pos < 8 && password2[pos] == 255 {
                 found = found + 1;
-                password2[pos] = (digest[3] & 0xf0) >> 4;
+                password2[pos] = digest[3] >> 4;
             }
         }
     }
