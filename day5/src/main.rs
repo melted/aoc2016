@@ -13,9 +13,9 @@ fn main() {
         index = index + 1;
         if digest[0] == 0 && digest[1] == 0 && digest[2] & 0xf0 == 0 {
             if password.len() < 8 {
-                password.push_str(&format!("{:x}", digest[2] & 0x0f));
+                password.push_str(&format!("{:x}", digest[2]));
             }
-            let pos = (digest[2] & 0x0f) as usize;
+            let pos = digest[2] as usize;
             if pos < 8 && password2[pos] == 255 {
                 found = found + 1;
                 password2[pos] = digest[3] >> 4;
