@@ -23,7 +23,7 @@ fn parse_input(s : &str) -> Vec<String> {
 }
 
 fn find_most_least_common(s : & str) -> (char, char) {
-    let mut histogram : HashMap<char, i32> = HashMap::new();
+    let mut histogram = HashMap::new();
     for c in s.chars() {
         let counter = histogram.entry(c).or_insert(0);
         *counter += 1;
