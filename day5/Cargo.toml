@@ -5,3 +5,4 @@ authors = ["Niklas Larsson <niklas@mm.st>"]
 
 [dependencies]
 md5="0.2.1"
+openssl="*"

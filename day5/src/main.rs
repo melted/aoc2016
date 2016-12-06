@@ -1,4 +1,7 @@
 extern crate md5;
+extern crate openssl;
+
+use openssl::hash::*;
 
 fn main() {
     let data = "wtnhxymk";
@@ -9,7 +12,8 @@ fn main() {
 
     while found < 8 {
         let s = format!("{}{}", data, index);
-        let digest = md5::compute(s.as_bytes());
+        let h = hash(MessageDigest::md5(), s.as_bytes()).expect("ssl!");
+        let digest = h.as_slice();
         index = index + 1;
         if digest[0] == 0 && digest[1] == 0 && digest[2] & 0xf0 == 0 {
             if password.len() < 8 {
