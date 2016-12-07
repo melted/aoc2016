@@ -1,5 +1,6 @@
 use std::io::prelude::*;
 use std::fs::File;
+use std::collections::HashMap;
 
 fn load_input() -> String {
     let mut data = String::new();
@@ -17,19 +18,29 @@ fn supports_tls(s : &str) -> bool {
     for (i, p) in s.split(['[', ']'].as_ref()).enumerate() {
         let has_abba = p.as_bytes().windows(4).any(is_abba);
         if has_abba {
-            if i%2 == 0 {
-                out = true;
-            }
             if i%2 == 1 {
-                return false;
+                return false
             }
+            out = true;
         }
     }
     out
 }
 
 fn supports_ssl(s : &str) -> bool {
-    true
+    let mut abas = HashMap::new();
+
+    for (i, p) in s.split(['[', ']'].as_ref()).enumerate() {
+        for v in p.as_bytes().windows(3) {
+            if v[0] == v[2] && v[0] != v[1] {
+                let val = if i % 2 == 1 { (v[0], v[1]) } else { (v[1], v[0]) };
+                let parity = 1 << (i % 2);
+                let e = abas.entry(val).or_insert(0);
+                *e |= parity;    
+            }
+        }
+    }
+    abas.values().any(|n| *n == 3)
 }
 
 fn main() {
