@@ -16,8 +16,7 @@ fn is_abba(v : &[u8]) -> bool {
 fn supports_tls(s : &str) -> bool {
     let mut out = false;
     for (i, p) in s.split(['[', ']'].as_ref()).enumerate() {
-        let has_abba = p.as_bytes().windows(4).any(is_abba);
-        if has_abba {
+        if p.as_bytes().windows(4).any(is_abba) {
             if i%2 == 1 {
                 return false
             }
@@ -34,9 +33,8 @@ fn supports_ssl(s : &str) -> bool {
         for v in p.as_bytes().windows(3) {
             if v[0] == v[2] && v[0] != v[1] {
                 let val = if i % 2 == 1 { (v[0], v[1]) } else { (v[1], v[0]) };
-                let parity = 1 << (i % 2);
                 let e = abas.entry(val).or_insert(0);
-                *e |= parity;    
+                *e |= 1 << (i % 2);    
             }
         }
     }
