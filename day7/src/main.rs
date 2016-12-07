@@ -9,14 +9,10 @@ fn load_input() -> String {
     data
 }
 
-fn is_abba(v : &[u8]) -> bool {
-     v[0] == v[3] && v[1] == v[2] && v[0] != v[1]
-}
-
 fn supports_tls(s : &str) -> bool {
     let mut out = false;
     for (i, p) in s.split(['[', ']'].as_ref()).enumerate() {
-        if p.as_bytes().windows(4).any(is_abba) {
+        if p.as_bytes().windows(4).any(|v| v[0] == v[3] && v[1] == v[2] && v[0] != v[1]) {
             if i%2 == 1 {
                 return false
             }
