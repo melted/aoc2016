@@ -1,3 +1,4 @@
+#[macro_use] extern crate lazy_static;
 extern crate regex;
 
 use std::io::prelude::*;
@@ -20,10 +21,11 @@ fn load_input() -> String {
 }
 
 fn parse_command(s : &str) -> Option<Cmd> {
-    let rect_matcher = Regex::new(r"rect (\d*)x(\d*)").unwrap();
-    let rotrow_matcher = Regex::new(r"rotate row y=(\d*) by (\d*)").unwrap();
-    let rotcol_matcher = Regex::new(r"rotate column x=(\d*) by (\d*)").unwrap();
-
+    lazy_static!{
+        static ref rect_matcher : Regex = Regex::new(r"rect (\d*)x(\d*)").unwrap();
+        static ref rotrow_matcher : Regex = Regex::new(r"rotate row y=(\d*) by (\d*)").unwrap();
+        static ref rotcol_matcher : Regex = Regex::new(r"rotate column x=(\d*) by (\d*)").unwrap();
+    }
     if let Some(c) = rect_matcher.captures(s) {
         return Some(Cmd::Rect(c[1].parse().unwrap(), c[2].parse().unwrap()));
     }
@@ -77,9 +79,9 @@ fn main() {
     for r in display.iter() {
         for v in r.iter() {
             count += *v;
-            print!("{}", if *v == 0 {'.'} else { 'x' }); 
+            print!("{}", if *v == 0 {' '} else { 'x' }); 
         }
         println!("");
     }
-    println!("{:?}", count);
+    println!("{}", count);
 }
