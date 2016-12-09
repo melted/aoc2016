@@ -23,31 +23,29 @@ fn decompressed_size(s : &str, shallow : bool) -> u64 {
         let next_cmd = slice.find('(');
         match next_cmd {
             Some(n) => {
-                count += n;
+                count += n as u64;
                 if let Some(c) = command_matcher.captures(&slice[n..]) {
                     let size : usize = c[1].parse().unwrap();
-                    let reps : usize = c[2].parse().unwrap();
-                    
+                    let reps : u64 = c[2].parse().unwrap();
                     let pos = c.pos(0).unwrap().1 + n;
                     let frag = &slice[pos..pos+size];
                     if shallow {
-                        count += reps * frag.len();
+                        count += reps * frag.len() as u64;
                     } else {
-                        count += reps * decompressed_size(&frag, shallow) as usize;
+                        count += reps * decompressed_size(&frag, false);
                     }
-                
                     slice = &slice[pos+size..];
                 } else {
                     println!("Match failed {:?} {}", slice, n);
                 }
             },
             None => {
-                count += slice.trim().len();
+                count += slice.trim().len() as u64;
                 break;
             } 
         }
     }
-    count as u64
+    count
 }
 
 fn main() {
