@@ -1,4 +1,3 @@
-#[macro_use] extern crate lazy_static;
 extern crate regex;
 
 use std::io::prelude::*;
@@ -25,17 +24,8 @@ struct World {
     outputs : HashMap<u32, u32>
 }
 
-impl Bot {
-    fn create(cmd : (Receiver, Receiver)) -> Bot {
-        Bot {
-            val: None,
-            cmd: cmd
-        }
-    }
-}
-
 impl World {
-    fn put_values(&mut self, values : Vec<(u32, u32)>) {
+    fn put_values(&mut self, values : &Vec<(u32, u32)>) {
         let mut bot_vals = values.clone();
         while let Some((i, val)) = bot_vals.pop() {
             let mut bot = self.bots.get_mut(&i).unwrap();
@@ -70,11 +60,8 @@ fn load_input() -> String {
 
 fn parse_input(s : &str, w : &mut World) -> Vec<(u32, u32)> {
     let mut inits = Vec::new();
-    lazy_static!{
-        static ref init_matcher : Regex = Regex::new(r"^value (\d*) goes to bot (\d*)").unwrap();
-        static ref command_matcher : Regex = 
-            Regex::new(r"^bot (\d*) gives low to (bot|output) (\d*) and high to (bot|output) (\d*)").unwrap();
-    }
+    let init_matcher = Regex::new(r"^value (\d*) goes to bot (\d*)").unwrap();
+    let command_matcher = Regex::new(r"^bot (\d*) gives low to (bot|output) (\d*) and high to (bot|output) (\d*)").unwrap();
     for l in s.lines() {
         if let Some(c) = init_matcher.captures(l) {
             inits.push((c[2].parse().unwrap(), c[1].parse().unwrap()))
@@ -89,7 +76,7 @@ fn parse_input(s : &str, w : &mut World) -> Vec<(u32, u32)> {
                                 };
             let r1 = get_receiver(&c[2], n1);
             let r2 = get_receiver(&c[4], n2);
-            w.bots.insert(id, Bot::create((r1, r2)));
+            w.bots.insert(id, Bot { val: None, cmd: (r1, r2) });
         }
     }
     inits
@@ -99,7 +86,7 @@ fn main() {
     let mut world = World { bots: HashMap::new(), outputs: HashMap::new() };
     let data = load_input();
     let inits = parse_input(&data, &mut world);
-    world.put_values(inits);
+    world.put_values(&inits);
     let mut prod = 1;
     for i in 0..3 {
         prod *=  *world.outputs.get(&i).unwrap();
