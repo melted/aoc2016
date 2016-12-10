@@ -35,8 +35,8 @@ impl Bot {
 }
 
 impl World {
-    fn put_value(&mut self, id : u32, value : u32) {
-        let mut bot_vals = vec![(id, value)];
+    fn put_values(&mut self, values : Vec<(u32, u32)>) {
+        let mut bot_vals = values.clone();
         while !bot_vals.is_empty() {
             let (i, val) = bot_vals.pop().unwrap();
             let mut bot = self.bots.get_mut(&i).unwrap();
@@ -70,7 +70,7 @@ fn load_input() -> String {
 }
 
 fn parse_input(s : &str, w : &mut World) -> Vec<(u32, u32)> {
-    let mut inits : Vec<(u32, u32)> = Vec::new();
+    let mut inits = Vec::new();
     lazy_static!{
         static ref init_matcher : Regex = Regex::new(r"^value (\d*) goes to bot (\d*)").unwrap();
         static ref command_matcher : Regex = 
@@ -100,9 +100,7 @@ fn main() {
     let mut world = World { bots: HashMap::new(), outputs: HashMap::new() };
     let data = load_input();
     let inits = parse_input(&data, &mut world);
-    for (i, v) in inits {
-        world.put_value(i, v);
-    }
+    world.put_values(inits);
     let mut prod = 1;
     for i in 0..3 {
         prod *=  *world.outputs.get(&i).unwrap();
