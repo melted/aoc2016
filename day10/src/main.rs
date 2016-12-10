@@ -37,8 +37,7 @@ impl Bot {
 impl World {
     fn put_values(&mut self, values : Vec<(u32, u32)>) {
         let mut bot_vals = values.clone();
-        while !bot_vals.is_empty() {
-            let (i, val) = bot_vals.pop().unwrap();
+        while let Some((i, val)) = bot_vals.pop() {
             let mut bot = self.bots.get_mut(&i).unwrap();
             match bot.val {
                 None => bot.val = Some(val),
