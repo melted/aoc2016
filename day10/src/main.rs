@@ -15,7 +15,6 @@ enum Receiver {
 
 #[derive(Debug)]
 struct Bot {
-    id : u32,
     val : Option<u32>,
     cmd : (Receiver, Receiver)
 }
@@ -27,9 +26,8 @@ struct World {
 }
 
 impl Bot {
-    fn create(id : u32, cmd : (Receiver, Receiver)) -> Bot {
+    fn create(cmd : (Receiver, Receiver)) -> Bot {
         Bot {
-            id: id,
             val: None,
             cmd: cmd
         }
@@ -48,7 +46,7 @@ impl World {
                     let low = min(v, val);
                     let high = max(v, val);
                     if low == 17 && high == 61 {
-                        println!("Part 1: {}", bot.id);
+                        println!("Part 1: {}", i);
                     }
                     match bot.cmd.0 {
                         Receiver::Output(n) => { self.outputs.insert(n, low); },
@@ -92,7 +90,7 @@ fn parse_input(s : &str, w : &mut World) -> Vec<(u32, u32)> {
                                 };
             let r1 = get_receiver(&c[2], n1);
             let r2 = get_receiver(&c[4], n2);
-            w.bots.insert(id, Bot::create(id, (r1, r2)));
+            w.bots.insert(id, Bot::create((r1, r2)));
         }
     }
     inits
