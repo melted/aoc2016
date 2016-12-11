@@ -82,6 +82,8 @@ fn normalize(c : &Config) -> Config {
             if out.chips[i] > out.chips[j] {
                 out.chips.swap(i, j);
                 out.generators.swap(i, j)
+            } else if out.chips[i] == out.chips[j] && out.generators[i] > out.generators[j] {
+                out.generators.swap(i, j);
             }
         }
     }
