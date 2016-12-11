@@ -2,9 +2,9 @@ use std::collections::HashSet;
 
 #[derive(Debug, PartialEq, Eq, Hash)]
 struct Config {
-    chips : Vec<u32>,
-    generators : Vec<u32>,
-    elevator : u32,
+    chips : Vec<i32>,
+    generators : Vec<i32>,
+    elevator : i32,
 }
 
 fn is_legal(c: &Config) -> bool {
@@ -28,75 +28,47 @@ fn copy_config(c : &Config) -> Config {
 
 fn possible_moves(c : &Config) -> Vec<Config> {
     let mut out = Vec::new();
+    let dirs = match c.elevator {
+        0 => vec![1],
+        3 => vec![-1],
+        _ => vec![-1, 1]
+    };
     for i in 0..c.chips.len() {
         if c.chips[i] == c.elevator {
-            if c.elevator < 3 {
+            for d in dirs.iter() {
                 let mut up = copy_config(c);
-                up.chips[i] += 1;
-                up.elevator += 1;
+                up.chips[i] += *d;
+                up.elevator += *d;
                 let up = up;
                 if c.generators[i] == c.elevator {
                     let mut with_gen = copy_config(&up);
-                    with_gen.generators[i] += 1;
+                    with_gen.generators[i] += *d;
                     out.push(with_gen);
                 }
                 for j in i+1..c.chips.len() {
                     if c.chips[j] == c.elevator {
                         let mut with_chip = copy_config(&up);
-                        with_chip.chips[j] += 1;
+                        with_chip.chips[j] += *d;
                         out.push(with_chip);
                     }
                 }
                 out.push(up);
             }
-            if c.elevator > 0 {
-                let mut down = copy_config(c);
-                down.chips[i] -= 1;
-                down.elevator -= 1;
-                let down = down;
-                if c.generators[i] == c.elevator {
-                    let mut with_gen = copy_config(&down);
-                    with_gen.generators[i] -= 1;
-                    out.push(with_gen);
-                }
-                for j in i+1..c.chips.len() {
-                    if c.chips[j] == c.elevator {
-                        let mut with_chip = copy_config(&down);
-                        with_chip.chips[j] -= 1;
-                        out.push(with_chip);
-                    }
-                }
-                out.push(down);
-            }
         }
         if c.generators[i] == c.elevator {
-            if c.elevator < 3 {
+            for d in dirs.iter() {
                 let mut up = copy_config(c);
-                up.generators[i] += 1;
-                up.elevator += 1;
+                up.generators[i] += *d;
+                up.elevator += *d;
                 let up = up;
                 for j in i+1..c.generators.len() {
                     if c.generators[j] == c.elevator {
                         let mut with_gen = copy_config(&up);
-                        with_gen.generators[j] += 1;
+                        with_gen.generators[j] += *d;
                         out.push(with_gen);
                     }
                 }
                 out.push(up);
-            }
-            if c.elevator > 0 {
-                let mut down = copy_config(c);
-                down.generators[i] -= 1;
-                down.elevator -= 1;
-                let down = down;
-                for j in i+1..c.generators.len() {
-                    if c.generators[j] == c.elevator {
-                        let mut with_gen = copy_config(&down);
-                        with_gen.generators[j] -= 1;
-                        out.push(with_gen);
-                    }
-                }
-                out.push(down);
             }
         }
     }
