@@ -91,7 +91,6 @@ fn init_machine(src : &str) -> Machine {
 
 fn execute(m : &mut Machine) {
     while m.pc < m.program.len() as i32 {
-        let mut update_pc = true;
         match m.program[m.pc as usize] {
             Instruction::CpyImm(v, d) => m.regs[d] = v,
             Instruction::Cpy(f, d) => m.regs[d] = m.regs[f],
@@ -99,16 +98,14 @@ fn execute(m : &mut Machine) {
             Instruction::Dec(r) => m.regs[r] -= 1,
             Instruction::Jnz(c, j) => if m.regs[c] != 0 {
                 m.pc += j;
-                update_pc = false;
+                continue;
             },
             Instruction::JnzImm(c, j) => if c != 0 {
                 m.pc += j;
-                update_pc = false;
+                continue;
             }
         }
-        if update_pc {
-            m.pc += 1;
-        }
+        m.pc += 1;
     }
 }
 
