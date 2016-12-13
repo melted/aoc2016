@@ -8,29 +8,10 @@ fn p_to_i(pt : Point) -> usize {
     pt.1*WIDTH + pt.0
 }
 
-fn i_to_p(i : usize) -> Point {
-    let y = i / WIDTH;
-    let x = i % WIDTH;
-    (x, y)
-}
-
 fn is_wall((x, y) : Point) -> bool {
     let input = 1364;
     let sum = x*x + y*y + 2*x*y + 3*x + y + input;
     usize::count_ones(sum) % 2 == 1
-}
-
-fn make_walls() -> Vec<u32> {
-    let mut walls = Vec::new();
-    let size = WIDTH * HEIGHT;
-    walls.resize(size, 0);
-
-    for i in 0..size {
-        if is_wall(i_to_p(i)) {
-            walls[i] = 1;
-        }
-    }
-    walls
 }
 
 fn neighbours(pt : Point) -> Vec<Point> {
@@ -50,10 +31,10 @@ fn neighbours(pt : Point) -> Vec<Point> {
     out
 }
 
-fn find_pos_and_count(map : &Vec<u32>, start : Point, target : Point) -> (u32, u32) {
+fn find_pos_and_count(start : Point, target : Point) -> (u32, u32) {
     let mut round = 0;
     let mut dist = Vec::new();
-    dist.resize(map.len(), 99999);
+    dist.resize(WIDTH*HEIGHT, 99999);
     let mut to_explore = HashSet::new();
     to_explore.insert(start);
 
@@ -66,8 +47,12 @@ fn find_pos_and_count(map : &Vec<u32>, start : Point, target : Point) -> (u32, u
                 return (round, count);
             }
             for n in neighbours(c) {
-                if map[p_to_i(n)] == 0 && dist[p_to_i(n)] == 99999 {
-                    next_round.insert(n);
+                if dist[p_to_i(n)] == 99999 {
+                    if !is_wall(n) {
+                        next_round.insert(n);
+                    } else {
+                        dist[p_to_i(n)] = 1000000;
+                    }
                 }
             }
         }
@@ -77,7 +62,6 @@ fn find_pos_and_count(map : &Vec<u32>, start : Point, target : Point) -> (u32, u
 }
 
 fn main() {
-    let walls = make_walls();
-    let (time, locs) = find_pos_and_count(&walls, (1,1), (31,39));
+    let (time, locs) = find_pos_and_count((1,1), (31,39));
     println!("{:?} {}", time, locs);      
 }
