@@ -1,0 +1,14 @@
+[root]
+name = "day14"
+version = "0.1.0"
+dependencies = [
+ "md5 0.3.2 (registry+https://github.com/rust-lang/crates.io-index)",
+]
+
+[[package]]
+name = "md5"
+version = "0.3.2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+
+[metadata]
+"checksum md5 0.3.2 (registry+https://github.com/rust-lang/crates.io-index)" = "6fce5a83f1379e0a2353a8ac5d15270d417ad36c6ac78ea4d4beae7482e6812d"
