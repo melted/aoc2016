@@ -15,17 +15,15 @@ fn filler(s : &str, size : usize) -> String {
 
 fn checksum(s : &str) -> String {
     let mut out = s.to_string();
-    loop {
+    while out.len() % 2 == 0 {
         let mut shrunk = String::new();
         for c in out.as_bytes().chunks(2) {
             let v = if c[0] == c[1] { '1' } else { '0' };
             shrunk.push(v);   
         }
         out = shrunk;
-        if out.len() % 2 == 1 {
-            return out;    
-        }
     }
+    out
 }
 
 fn main() {
