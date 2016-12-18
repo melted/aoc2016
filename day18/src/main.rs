@@ -43,10 +43,10 @@ fn make_next_row(r : &Row) -> Row {
 
 fn count_safe(start : &Row, rows : u32) -> u32 {
     let mut row = start.clone();
-    let mut out = 0;
-    for _ in 0..rows {
+    let mut out = row.iter().sum();
+    for _ in 1..rows {
+        row = make_next_row(&row);
         out += row.iter().sum();
-        row = make_next_row(&row); 
     }
     out
 }
