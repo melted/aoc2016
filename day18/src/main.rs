@@ -17,24 +17,22 @@ fn parse_input(s : &str) -> Row {
             '.' => out.push(1),
             '^' => out.push(0),
             '\n' => {},
-            x => panic!("Invalid input {} xxx", x)
+            x => panic!("Invalid input {}", x)
         }
     }
     out
 }
 
 fn tile_value(l : u32, c : u32, r : u32) -> u32 {
-    if l == c && r != c {
-        return 0;
+    if l == c && r != c || r == c &&  l != c {
+        0
+    } else {
+        1
     }
-    if r == c &&  l != c {
-        return 0;
-    }
-    1
 } 
 
 fn make_next_row(r : &Row) -> Row {
-    let mut out = Vec::new();
+    let mut out = Vec::with_capacity(r.len());
     out.push(tile_value(1, r[0], r[1]));
     for w in r.as_slice().windows(3) {
         out.push(tile_value(w[0], w[1], w[2]));
@@ -42,7 +40,6 @@ fn make_next_row(r : &Row) -> Row {
     out.push(tile_value(r[r.len()-2], r[r.len()-1], 1));
     out
 }
-
 
 fn main() {
     let input = load_input();
