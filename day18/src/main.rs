@@ -41,19 +41,18 @@ fn make_next_row(r : &Row) -> Row {
     out
 }
 
-fn main() {
-    let input = load_input();
-    let mut row = parse_input(&input);
-    let mut count : u32 = 0;
-    let mut part1 = 0;
-
-    for i in 0..400000 {
-        count += row.iter().sum();
-        if i == 39 {
-            part1 = count;
-        }
+fn count_safe(start : &Row, rows : u32) -> u32 {
+    let mut row = start.clone();
+    let mut out = 0;
+    for _ in 0..rows {
+        out += row.iter().sum();
         row = make_next_row(&row); 
     }
+    out
+}
 
-    println!("{} {}", part1, count);
+fn main() {
+    let input = load_input();
+    let row = parse_input(&input);
+    println!("{} {}", count_safe(&row, 40), count_safe(&row, 400000));
 }
