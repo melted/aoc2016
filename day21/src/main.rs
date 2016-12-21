@@ -3,7 +3,6 @@ extern crate regex;
 use std::io::prelude::*;
 use std::fs::File;
 use regex::Regex;
-use std::collections::HashMap;
 
 #[derive(Debug)]
 enum Instr {
@@ -20,6 +19,11 @@ enum Instr {
 impl Instr {
     fn execute(&self, s : &str) -> String {
         let mut v : Vec<char> = s.chars().collect();
+        let rotate = |w : &Vec<char>, m| {
+            let mut new_v = w[m..].to_vec();
+            new_v.extend_from_slice(&w[0..m]);
+            new_v
+        };
         match *self {
             Instr::SwapPos(a, b) => {
                 v.swap(a, b);
@@ -31,23 +35,17 @@ impl Instr {
             },
             Instr::RotL(n) => {
                 let m = n % v.len();
-                let mut new_v = v[m..].to_vec();
-                new_v.extend_from_slice(&v[0..m]);
-                v = new_v;
+                v = rotate(&v, m);
             },
             Instr::RotR(n) => {
                 let m = (v.len() - n) % v.len();
-                let mut new_v = v[m..].to_vec();
-                new_v.extend_from_slice(&v[0..m]);
-                v = new_v;
+                v = rotate(&v, m);
             },
             Instr::RotPos(a) => {
                 let i = v.iter().position(|&c| c == a).unwrap();
                 let rot = (i + if i > 3 { 2 } else { 1 }) % v.len();
                 let m = v.len() - rot;
-                let mut new_v = v[m..].to_vec();
-                new_v.extend_from_slice(&v[0..m]);
-                v = new_v;
+                v = rotate(&v, m);
             },
             Instr::Rev(a, b) => {
                 let mut sub = &mut v[a..b+1];
@@ -70,9 +68,7 @@ impl Instr {
                     0 => 1,
                     _ => 0
                 };
-                let mut new_v = v[m..].to_vec();
-                new_v.extend_from_slice(&v[0..m]);
-                v = new_v;
+                v = rotate(&v, m);
             }
         }
         let mut out = String::new();
@@ -148,19 +144,15 @@ fn main() {
     let instr = parse(&src);
     let mut s = input.to_string();
     for ins in &instr {
-        println!("{:?}", ins);
-        println!("Before: {}", s);
         s = ins.execute(&s);
-        println!("After: {}", s);
     }
-
+    println!("Part 1: {}", s);
+    
     let scrambled = "fbgdceah";
     s = scrambled.to_string();
     let unscrambler = reverser(&instr);
     for ins in &unscrambler {
-        println!("{:?}", ins);
-        println!("Before: {}", s);
         s = ins.execute(&s);
-        println!("After: {}", s);
     }
+    println!("Part 2: {}", s);
 }
