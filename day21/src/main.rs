@@ -147,7 +147,7 @@ fn main() {
     let src = load_input();
     let instr = parse(&src);
     let mut s = input.to_string();
-    for ins in instr {
+    for ins in &instr {
         println!("{:?}", ins);
         println!("Before: {}", s);
         s = ins.execute(&s);
@@ -156,9 +156,8 @@ fn main() {
 
     let scrambled = "fbgdceah";
     s = scrambled.to_string();
-    let again = parse(&src);
-    let unscrambler = reverser(&again);
-    for ins in unscrambler {
+    let unscrambler = reverser(&instr);
+    for ins in &unscrambler {
         println!("{:?}", ins);
         println!("Before: {}", s);
         s = ins.execute(&s);
