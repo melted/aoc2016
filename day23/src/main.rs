@@ -96,14 +96,12 @@ fn execute(m : &mut Machine) {
             Instruction::Jnz(a, b) => {
                 let v = val(a, &m.regs);
                 if v != 0 {
-                    println!("Jump {:?}", m);
                     m.pc += val(b, &m.regs);
                     continue;
                 }
             },
             Instruction::Tgl(Arg::Reg(r)) => {
                 let target = (m.pc + m.regs[r]) as usize;
-                println!("Toggle {} {:?}", target, m);
                 if target < m.program.len() {
                     let new_ins = match m.program[target] {
                         Instruction::Cpy(a, b) => Instruction::Jnz(a,b),
@@ -126,7 +124,7 @@ fn execute(m : &mut Machine) {
 fn main() {
     let code = load_input();
     let mut machine = init_machine(&code);
-    machine.regs[0] = 7;
+    machine.regs[0] = 12;
     execute(&mut machine);
     println!("{:?}", machine.regs[0]);
 }
