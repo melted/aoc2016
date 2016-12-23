@@ -44,30 +44,12 @@ fn parse_instruction(s : &str) -> Instruction {
     let parts :Vec<&str> = s.split_whitespace().collect();
     if !parts.is_empty() {
         match parts[0] {
-            "cpy" => {
-                return Instruction::Cpy(parse_arg(parts[1]).unwrap(), parse_arg(parts[2]).unwrap())
-            },
-            "inc" => {
-                if let Some(reg) = parse_arg(parts[1]) {
-                    return Instruction::Inc(reg)
-                }
-            },
-            "dec" => {
-                if let Some(reg) = parse_arg(parts[1]) {
-                    return Instruction::Dec(reg);
-                }
-            },
-            "jnz" => {
-                return Instruction::Jnz(parse_arg(parts[1]).unwrap(), parse_arg(parts[2]).unwrap())
-            }
-            "tgl" => {
-                if let Some(reg) = parse_arg(parts[1]) {
-                    return Instruction::Tgl(reg);
-                }
-            },
-            _ => {
-                panic!("Parse fail: {}", s);
-            }
+            "cpy" => return Instruction::Cpy(parse_arg(parts[1]).unwrap(), parse_arg(parts[2]).unwrap()),
+            "inc" => return Instruction::Inc(parse_arg(parts[1]).unwrap()),
+            "dec" => return Instruction::Dec(parse_arg(parts[1]).unwrap()),
+            "jnz" => return Instruction::Jnz(parse_arg(parts[1]).unwrap(), parse_arg(parts[2]).unwrap()),
+            "tgl" => return Instruction::Tgl(parse_arg(parts[1]).unwrap()),
+            _ => panic!("Parse fail: {}", s)
         }
     }
     panic!("Parse fail: {}", s);
@@ -88,9 +70,7 @@ fn execute(m : &mut Machine) {
     };
     while m.pc < m.program.len() as i32 {
         match m.program[m.pc as usize] {
-            Instruction::Cpy(v, Arg::Reg(d)) => { 
-                m.regs[d] = val(v, &m.regs);
-            },
+            Instruction::Cpy(v, Arg::Reg(d)) => m.regs[d] = val(v, &m.regs),
             Instruction::Inc(Arg::Reg(r)) => m.regs[r] += 1,
             Instruction::Dec(Arg::Reg(r)) => m.regs[r] -= 1,
             Instruction::Jnz(a, b) => {
@@ -124,7 +104,10 @@ fn execute(m : &mut Machine) {
 fn main() {
     let code = load_input();
     let mut machine = init_machine(&code);
-    machine.regs[0] = 12;
+    let mut machine2 = init_machine(&code);
+    machine.regs[0] = 7;
+    machine2.regs[0] = 12;
     execute(&mut machine);
-    println!("{:?}", machine.regs[0]);
+    execute(&mut machine2);
+    println!("{} {}", machine.regs[0], machine2.regs[0]);
 }
