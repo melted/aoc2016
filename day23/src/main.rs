@@ -82,26 +82,28 @@ fn init_machine(src : &str) -> Machine {
 }
 
 fn execute(m : &mut Machine) {
+    let val = |a, regs : &Vec<i32>| match a {
+        Arg::Imm(i) => i,
+        Arg::Reg(r) => regs[r]
+    };
     while m.pc < m.program.len() as i32 {
         match m.program[m.pc as usize] {
-            Instruction::Cpy(Arg::Imm(v), Arg::Reg(d)) => { 
-                m.regs[d] = v
-            },
-            Instruction::Cpy(Arg::Reg(r), Arg::Reg(d)) => { 
-                m.regs[d] = m.regs[r]
+            Instruction::Cpy(v, Arg::Reg(d)) => { 
+                m.regs[d] = val(v, &m.regs);
             },
             Instruction::Inc(Arg::Reg(r)) => m.regs[r] += 1,
             Instruction::Dec(Arg::Reg(r)) => m.regs[r] -= 1,
-            Instruction::Jnz(Arg::Reg(c), Arg::Imm(j)) => if m.regs[c] != 0 {
-                m.pc += j;
-                continue;
-            },
-            Instruction::Jnz(Arg::Imm(c), Arg::Imm(j)) => if c != 0 {
-                m.pc += j;
-                continue;
+            Instruction::Jnz(a, b) => {
+                let v = val(a, &m.regs);
+                if v != 0 {
+                    println!("Jump {:?}", m);
+                    m.pc += val(b, &m.regs);
+                    continue;
+                }
             },
             Instruction::Tgl(Arg::Reg(r)) => {
                 let target = (m.pc + m.regs[r]) as usize;
+                println!("Toggle {} {:?}", target, m);
                 if target < m.program.len() {
                     let new_ins = match m.program[target] {
                         Instruction::Cpy(a, b) => Instruction::Jnz(a,b),
