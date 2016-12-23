@@ -1,7 +1,7 @@
 use std::io::prelude::*;
 use std::fs::File;
 
-#[derive(Debug)]
+#[derive(Debug, Copy, Clone)]
 enum Arg {
     Imm(i32),
     Reg(usize)
@@ -103,9 +103,14 @@ fn execute(m : &mut Machine) {
             Instruction::Tgl(Arg::Reg(r)) => {
                 let target = (m.pc + m.regs[r]) as usize;
                 if target < m.program.len() {
-                    match m.program[target] {
-                        _ => {}
-                    }
+                    let new_ins = match m.program[target] {
+                        Instruction::Cpy(a, b) => Instruction::Jnz(a,b),
+                        Instruction::Jnz(a, b) => Instruction::Cpy(a,b),
+                        Instruction::Inc(a) => Instruction::Dec(a),
+                        Instruction::Dec(a) => Instruction::Inc(a),
+                        Instruction::Tgl(a) => Instruction::Inc(a)
+                    };
+                    m.program[target] = new_ins;
                 }
             }
             _ => {
@@ -119,11 +124,7 @@ fn execute(m : &mut Machine) {
 fn main() {
     let code = load_input();
     let mut machine = init_machine(&code);
+    machine.regs[0] = 7;
     execute(&mut machine);
     println!("{:?}", machine.regs[0]);
-
-    let mut machine2 = init_machine(&code);
-    machine2.regs[2] = 1;
-    execute(&mut machine2);
-    println!("{:?}", machine2.regs[0]);
 }
